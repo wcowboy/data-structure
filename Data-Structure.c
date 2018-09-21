@@ -2,134 +2,409 @@
 # include<string.h>
 # include<stdlib.h>
 # include<windows.h>
-typedef struct Student
-{ 
-	char name[20];				//å§“å     
-    int num;					//å­¦å· 
-    int room;					//æˆ¿é—´å· 
-    struct Student *next;		
-}Stu;
-//å‡½æ•°å£°æ˜
+typedef struct Student {
+	char name[20];				//ĞÕÃû
+	int num;					//Ñ§ºÅ
+	int room;					//·¿¼äºÅ
+	struct Student *next;
+} Stu;
+/***********º¯ÊıÉùÃ÷********/
+void exchange(Stu *p,Stu *q);
+void sort_num(Stu *head);
+void sort_room(Stu *head);
+void sort_name(Stu *head);
+void putone(Stu *p);
 void output(Stu *head);
-int lenth(Stu * head);
-int menu_select();     
-Stu *find(Stu *head);
-Stu *input(Stu *head);     s
-Stu* del(Stu *head);
+void read_file();
+void write_file(Stu *head);
+int  lenth(Stu * head);
+int  menu_select();
+int  getvalue(Stu *head,int n,int sign);
+Stu  *edit(Stu *head);
+Stu  *fun(Stu* head);
+Stu  *getpoint(Stu *head,int possion);
+Stu  *creat(Stu *head);
+Stu  *input(Stu *head);
+Stu  *del(Stu *head);
+Stu  *search(Stu *head,int key,int sign);
 
-int main(){
-//	Stu *input(int n);
-//	menu_select();				//èœå•é€‰æ‹©å‡½æ•° 
+int main() {
 	Stu *head,*p;
 	head = NULL;
-	head = input(head);
-	printf("len = %d\n",lenth(head));
+//	head = input(head);
+//	head = input(head);
+//	head = input(head);
+	head = creat(head);
+	sort_num(head);
 	output(head);
-	head = input(head);
-	printf("len = %d\n",lenth(head));
-	output(head);
-	del(head);
-	output(head);	
-} 
-Stu *input(Stu * head){         //æ·»åŠ ä¿¡æ¯ 	
-	Stu *l,*p; 
+	printf("%d",getvalue(head,0,1));
+//	output(search(head,3,1));
+
+
+//	while(1) {
+//		head = fun(head);
+//	}
+
+
+}
+Stu *fun(Stu *head) {
+	int n,sign = 0,x;
+	Stu *p;
+	p = NULL;
+	n = menu_select();
+	switch(n) {
+		case 0: {
+			printf("Ğ»Ğ»Ê¹ÓÃ:\n");
+			exit(1);
+			break;
+		}
+		case 1: {
+			head = input(head);
+			system("pause");
+			break;
+		}
+		case 2: {
+			output(head);
+			system("pause");
+			break;
+		}
+		case 3: {
+			printf("\n\t\tÇëÑ¡ÔñÅÅĞò¹Ø¼ü×Ö(1-3):\n");
+			printf("\t\t1.ĞÕÃû\n");
+			printf("\t\t2.Ñ§ºÅ\n");
+			printf("\t\t3.ËŞÉá\n");
+			scanf("%d",&sign);
+			switch(sign) {
+				case 1: {
+					sort_name(head);
+					break;
+				}
+				case 2: {
+					sort_num(head);
+					break;
+				}
+				case 3: {
+					sort_room(head);
+					break;
+				}
+			}
+			output(head);
+			system("pause");
+			break;
+		}
+		case 4: {
+			break;
+		}
+		case 5: {
+			printf("\n\t\tÇëÑ¡Ôñ²éÕÒ¹Ø¼ü×Ö(1-2):\n");
+			printf("\t\t1.Ñ§ºÅ\n");
+			printf("\t\t2.ËŞÉá\n");
+			scanf("%d",&sign);
+			printf("ÇëÊäÈë²éÕÒĞÅÏ¢:\n");
+			scanf("%d",&x);
+			switch(sign) {
+				case 1: {
+					sort_num(head);
+					putone(search(head,x,1));
+					system("pause");
+					break;
+				}
+				case 2: {
+					sort_room(head);
+					putone(search(head,x,2));
+					system("pause");
+					break;
+				}
+			}
+			break;
+		}
+		case 6: {
+			printf("ÇëÊäÈëÑ§ºÅ:\n");
+			scanf("%d",&x);
+			sort_num(head);
+			p = search(head,x,1);
+			putone(p);
+			p = edit(p);
+
+			system("pause");
+			break;
+		}
+	}
+
+	return head;
+}
+
+int menu_select() {      		//²Ëµ¥¹¦ÄÜÑ¡Ôñ
+	int a;
+	do {
+		system("cls");			//ÇåÆÁ
+		printf("\n\n\t\t----------------------Ñ§ÉúËŞÉá¹ÜÀíÏµÍ³----------------------\n\n");
+		printf("\t\t* *  1. Ìí¼ÓĞÅÏ¢                        * *  \n\n");
+		printf("\t\t* *  2. ÏÔÊ¾ĞÅÏ¢                        * *  \n\n");
+		printf("\t\t* *  3. °´ĞÅÏ¢ÅÅĞò²¢ÏÔÊ¾                    * *  \n\n");
+		printf("\t\t* *  4. ²åÈëĞÅÏ¢                        * *  \n\n");
+		printf("\t\t* *  5. ²éÕÒĞÅÏ¢                        * *  \n\n");
+		printf("\t\t* *  6. ĞŞ¸ÄĞÅÏ¢                        * *  \n\n");
+		printf("\t\t* *  7. É¾³ıĞÅÏ¢                        * *  \n\n");
+		printf("\t\t* *  8. ½«ĞÅÏ¢Ğ´ÈëÎÄ¼ş                      * *  \n\n");
+		printf("\t\t* *  9. ¶ÁÈ¡ÎÄ¼şÖĞµÄĞÅÏ¢                    * *  \n\n");
+		printf("\t\t* *  0. ÍË³öÏµÍ³                            * *  \n\n");
+		printf("\t\t------------------------------------------------------------\n");
+		printf("\tÇëÑ¡ÔñÄúÒªÔËĞĞµÄÑ¡Ïî°´(0-9):");
+		scanf("%d",&a);
+	} while(a<0||a>9);		//¹ıÂËÎŞĞ§ÊäÈë
+	return a;
+}
+
+Stu *input(Stu * head) {        //Ìí¼ÓĞÅÏ¢
+	Stu *l,*p;
 	l = (Stu *)malloc(sizeof(Stu));
-	printf("\t\tå§“å:");
-	scanf("%s",&l->name);
-	printf("\t\tå­¦å·:");
-	scanf("%d",&l->num);
-	printf("\t\tæˆ¿é—´å·:");
-	scanf("%d",&l->room);
+	printf("ÇëÒÀ´ÎÊäÈëĞÕÃûÑ§ºÅËŞÉá:\n");
+	scanf("%s%d%d",&l->name,&l->num,&l->room);
 	printf("\n");
 	l->next = NULL;
-	if(head == NULL){
+	if(head == NULL) {
 		head = l;
 		return head;
-	} 
-	else{
+	} else {
 		p = head;
-		while(p->next != NULL){
+		while(p->next != NULL) {
 			p = p->next;
 		}
 		p->next = l;
 		return head;
 	}
 }
-Stu* del(Stu *head){ 			//åˆ é™¤ä¿¡æ¯ 
+Stu* del(Stu *head) { 			//É¾³ıĞÅÏ¢
+	Stu * p,*q;
 	int i,n;
-	printf("è¯·è¾“å…¥è¦åˆ é™¤çš„å­¦ç”Ÿä½ç½®:\n");
-	scanf("%d",&n);
-	Stu *p,*q;
+	printf("ÇëÊäÈëÒªÉ¾³ıµÄÑ§ÉúÎ»ÖÃ:\n");
+	scanf("%d",&n );
+	if(n == 1) {
+		q = head;
+		if(head != NULL) {
+			printf("1\n");
+			head = head->next;
+			putone(head);
+		} else return NULL;
+		free(q);
+		return head;
+
+	}
+	p = getpoint(head,n - 1);
+	if(p == NULL) {
+		printf("µÚ%d¸öÑ§Éú²»´æÔÚ\n",n );
+		return NULL;
+	} else if(p->next == NULL) {
+		printf("µÚ%d¸öÑ§Éú²»´æÔÚ\n",n );
+		return NULL;
+	} else {
+		q = p->next;
+		p->next = q->next; /*´ÓÁ´±íÖĞÉ¾³ı*/
+		free(q); /*ÊÍ·Å±»É¾³ı½áµã */
+		return head;
+	}
+}
+
+int  getvalue(Stu *head,int n,int sign) {				//µÚn¸öÔªËØµÄÖµ
+	int j=0;
+	Stu *p;
 	p = head;
-	for(i = 1;i < n && p -> next != NULL;i++){
-		p=p->next;
-	}
-	q=p->next;
-	p->next=q->next;
-	free(q);
-}
-Stu * find(Stu *head){ 			//æŒ‰å­¦å·æŸ¥æ‰¾å‡½æ•° 
-	int num; 
-	Stu *p = head;
-	printf("è¯·è¾“å…¥è¦æŸ¥æ‰¾çš„å­¦ç”Ÿå­¦å·:\n");
-	scanf("%d",&num);
-	int i = 1;
-	while ( p!=NULL && p->num != num ){
+	while(p != NULL && j < n) {
 		p = p->next;
+		j++;
 	}
-	return p;
-	
+	if(sign = 1)
+		return p->num;
+	else
+		return p->room;				//·µ»ØÑ§ºÅ»òÕßĞÕÃû
 }
-int lenth(Stu * head){			//æ±‚è¡¨é•¿ 
-	Stu * p = head;				//pæŒ‡å‘head 
+
+Stu *getpoint(Stu *head,int n) { 					//µÚn¸öÔªËØµÄÖ¸Õë
+	int i = 1;
+	Stu *p = head;
+	while(p != NULL && i < n) {
+		p = p->next;
+		i ++;
+	}
+	if(i == n)
+		return p;
+	else return NULL;
+}
+
+Stu *search(Stu *head,int key,int sign) {			//²éÕÒ
+	int low = 1,high = length(head);
+	int mid = 0;
+	while(low<=high) {
+		mid = (low + high) / 2;
+		if(key == getvalue(head,mid,sign))
+			return getpoint(head,mid);
+		else if(key < getvalue(head,mid,sign))
+			high = mid-1;
+		else low = mid+1;
+	}
+	return NULL;
+}
+
+int length(Stu * head) {			//Çó±í³¤
+	Stu * p = head;				//pÖ¸Ïòhead
 	int j = 0;
-	while(p){
-		p = p -> next;			//å½“å‰ç“¶pæŒ‡å‘ç¬¬jä¸ªèŠ‚ç‚¹ 
+	while(p) {
+		p = p -> next;			//µ±Ç°Æ¿pÖ¸ÏòµÚj¸ö½Úµã
 		j ++;
 	}
-	return j;					//è¿”å›è¡¨é•¿ 
+	return j;					//·µ»Ø±í³¤
 }
-int menu_select(){      		//èœå•åŠŸèƒ½é€‰æ‹© 
- 	int a;
-    do{
-        system("cls");			//æ¸…å± 
-        printf("\n\n\t\t----------------------å­¦ç”Ÿå®¿èˆç®¡ç†ç³»ç»Ÿ----------------------\n\n");
-        printf("\t\tâ˜†â˜† 1. æ·»åŠ å­¦ç”Ÿä¿¡æ¯                        â˜†â˜†\n\n");
-        printf("\t\tâ˜†â˜† 2. æ˜¾ç¤ºå­¦ç”Ÿä¿¡æ¯                        â˜†â˜†\n\n");
-        printf("\t\tâ˜†â˜† 3. æŒ‰ä¿¡æ¯æ’åºå¹¶æ˜¾ç¤º                    â˜†â˜†\n\n");
-        printf("\t\tâ˜†â˜† 4. æ’å…¥å­¦ç”Ÿä¿¡æ¯                        â˜†â˜†\n\n");
-        printf("\t\tâ˜†â˜† 5. æŸ¥æ‰¾å­¦ç”Ÿä¿¡æ¯                        â˜†â˜†\n\n");
-        printf("\t\tâ˜†â˜† 6. ä¿®æ”¹å­¦ç”Ÿä¿¡æ¯                        â˜†â˜†\n\n");
-        printf("\t\tâ˜†â˜† 7. åˆ é™¤å­¦ç”Ÿä¿¡æ¯                        â˜†â˜†\n\n");
-        printf("\t\tâ˜†â˜† 8. å°†ä¿¡æ¯å†™å…¥æ–‡ä»¶                      â˜†â˜†\n\n");
-        printf("\t\tâ˜†â˜† 9. è¯»å–æ–‡ä»¶ä¸­çš„ä¿¡æ¯                    â˜†â˜†\n\n");
-		printf("\t\tâ˜†â˜† 0. é€€å‡ºç³»ç»Ÿ                            â˜†â˜†\n\n");
-        printf("\t\t------------------------------------------------------------\n");
-        printf("\tè¯·é€‰æ‹©æ‚¨è¦è¿è¡Œçš„é€‰é¡¹æŒ‰(0-9):");
-        scanf("%d",&a);
-    }while(a<0||a>9);		//è¿‡æ»¤æ— æ•ˆè¾“å…¥ 
-    return a;
-}
-void output(Stu *head){			//è¾“å‡ºå‡½æ•° 
+
+void output(Stu *head) {			//Êä³öº¯Êı
 	printf("-----------------------------------------\n");
-	printf(" å§“å		å­¦å·		æˆ¿é—´å· \n");
+	printf(" ĞÕÃû		Ñ§ºÅ		·¿¼äºÅ \n");
 	printf("------------------------------------------\n");
 	Stu *p;
 	p=head;
-	if(head==NULL){
-		printf("\n\t\t\tå­¦ç”Ÿä¿¡æ¯ä¸ºç©ºï¼\n");
-	}
-	else{
-		do{
+	if(head==NULL) {
+		printf("\n\t\t\tÑ§ÉúĞÅÏ¢Îª¿Õ£¡\n");
+	} else {
+		do {
 			printf("%3s%20d%10d%\n",p->name,p->num,p->room);
 			p=p->next;
-		}while(p!=NULL);
-	} 
+		} while(p!=NULL);
+	}
 }
-void edit(Stu * head){			//ç¼–è¾‘å‡½æ•° 
-	
-} 
+Stu *edit(Stu * p) {			//±à¼­º¯Êı
+	if(p == NULL) {
+		printf("Ñ§ºÅ´íÎó\n");
+		return NULL;
+	} else {
+		printf("ÇëÒÀ´ÎÊäÈëĞÕÃûÑ§ºÅËŞÉá:\n");
+		scanf("%s%d%d",&p->name,&p->num,&p->room);
+		return p;
+	}
+
+}
+void sort_num(Stu *head) {		//°´Ñ§ºÅÅÅĞò
+	/********************°´Ñ§ºÅ******************/
+	Stu *p,*q;
+	for(p = head ; p != NULL; p = p->next)
+		for(q = head; q != NULL; q = q->next) {
+			if(p->num < q->num) {
+				exchange(p,q);
+
+			}
+		}
+}
+
+void sort_room(Stu *head) {		//°´ËŞÉáÅÅĞò
+	Stu *p,*q;
+	/********************°´ËŞÉá****************/
+	for(p = head ; p != NULL; p = p->next)
+		for(q = head; q != NULL; q = q->next) {
+			if(p->room < q->room) {
+				exchange(p,q);
+			}
+		}
+}
+
+void sort_name(Stu *head) {			//°´ĞÕÃûÅÅĞòº¯Êı
+	Stu *p,*q;
+	/*	int n;
+
+
+		switch(n) {*/
+	/********************°´ĞÕÃû******************/
+	for(p = head ; p != NULL; p = p->next)
+		for(q = head; q != NULL; q = q->next) {
+			if(strcmp(p->name,q->name) < 0 ) {
+				exchange(p,q);
+			}
+		}
+}
+void exchange(Stu *p,Stu *q) {	//Êı¾İ½»»»
+	char temp[20];
+	p->num = p->num + q->num;
+	q->num = p->num - q->num;
+	p->num = p->num - q->num;
+	p->room = p->room + q->room;
+	q->room = p->room - q->room;
+	p->room = p->room - q->room;
+	strcpy(temp,p->name);
+	strcpy(p->name,q->name);
+	strcpy(q->name,temp);
+}
+
+void putone(Stu *p) {
+	if(p == NULL) {
+		printf("\n\t\t\tÑ§ÉúĞÅÏ¢Îª¿Õ£¡\n");
+	} else {
+		printf("-----------------------------------------\n");
+		printf(" ĞÕÃû		Ñ§ºÅ		·¿¼äºÅ \n");
+		printf("------------------------------------------\n");
+		printf("%3s%20d%10d%\n",p->name,p->num,p->room);
+	}
+}
+Stu *creat(Stu *head) {
+	Stu *p,*q;
+	p = (Stu *)malloc(sizeof(Stu));
+	q = (Stu *)malloc(sizeof(Stu));
+	head = p;
+	strcpy(p->name,"abc");
+	p->num = 4;
+	p->room = 3;
+	p->next = q;
+	p = q;
+	q = (Stu *)malloc(sizeof(Stu));
+	strcpy(p->name,"acd");
+	p->num = 3;
+	p->room = 1;
+	p->next = q;
+
+	strcpy(q->name,"aad");
+	q->num = 5;
+	q->room = 2;
+	q->next = NULL;
+	return head;
+}
+
+void write_file(Stu *head) {
+	FILE *fp;
+	Stu *p;
+	if((fp=fopen("Data.txt","at+"))==NULL) {
+		printf("ÎÄ¼ş´ò¿ªÊ§°Ü£¡\n");
+		return ;
+	}
+	p=head;
+	while(p != NULL) {
+		fprintf(fp,"%s\t",p->name);
+		fprintf(fp,"%d\t",p->num);
+		fprintf(fp,"%d\t",p->room);
+		p = p->next;
+	}
+	printf("Ğ´Èë³É¹¦\n");
+}
+
+void read_file(Stu *head) {
+	FILE *fp;
+	char name[20];
+	int num;
+	int room;
+	fp=fopen("Data.txt","rb+");
+	if(fp == NULL) {
+		printf("ÎÄ¼ş´ò¿ªÊ§°Ü£¡\n");
+	}
+	printf("-----------------------------------------\n");
+	printf(" ĞÕÃû		Ñ§ºÅ		·¿¼äºÅ \n");
+	printf("------------------------------------------\n");
+	fscanf(fp,"%s\t%d\t%d",name,&num,&room);
+//	while(fscanf(fp,"%s\t%d\t%d",&name,&num,&room) != EOF){
+
+	printf("%3s%20d%10d%\n",name,num,room);
+//	}
+
+	printf("1\n");
 
 
 
+	fflush(fp);
+	fclose(fp);
+}
 
